@@ -7,17 +7,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.lang.NonNullApi;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class InvoiceExceptionHandler extends ResponseEntityExceptionHandler {
@@ -34,7 +36,7 @@ public class InvoiceExceptionHandler extends ResponseEntityExceptionHandler {
         String userMessage = messageSource.getMessage("invalid.message", null, LocaleContextHolder.getLocale());
         String devMessage = ex.getCause().toString();
 
-        List<InvoiceError> errors = Arrays.asList(new InvoiceError(userMessage, devMessage));
+        List<InvoiceError> errors = List.of(new InvoiceError(userMessage, devMessage));
 
         return handleExceptionInternal(ex, errors, headers, HttpStatus.BAD_REQUEST, request);
     }
@@ -44,6 +46,29 @@ public class InvoiceExceptionHandler extends ResponseEntityExceptionHandler {
 
         List<InvoiceError> errors = createErrorList(ex.getBindingResult());
         return handleExceptionInternal(ex, errors, headers, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, WebRequest request) {
+
+        String userMessage = messageSource.getMessage("resource.not-found", null, LocaleContextHolder.getLocale());
+        String devMessage = ex.toString();
+
+        List<InvoiceError> errors = List.of(new InvoiceError(userMessage, devMessage));
+
+        return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler({NoSuchElementException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException ex, WebRequest request) {
+        String userMessage = messageSource.getMessage("resource.not-found", null, LocaleContextHolder.getLocale());
+        String devMessage = ex.toString();
+
+        List<InvoiceError> errors = List.of(new InvoiceError(userMessage, devMessage));
+
+        return handleExceptionInternal(ex, errors, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     private List<InvoiceError> createErrorList(BindingResult bindingResult) {

@@ -17,8 +17,8 @@ import java.util.Optional;
 @RequestMapping("/api/v1/category")
 public class CategoryController {
 
-    private CategoryRepository categoryRepository;
-    private ApplicationEventPublisher publisher;
+    private final CategoryRepository categoryRepository;
+    private final ApplicationEventPublisher publisher;
 
     public CategoryController(CategoryRepository categoryRepository, ApplicationEventPublisher publisher) {
         this.categoryRepository = categoryRepository;
@@ -35,7 +35,7 @@ public class CategoryController {
     public ResponseEntity<Category> create(@Valid @RequestBody Category category, HttpServletResponse response) {
         Category savedCategory = categoryRepository.save(category);
 
-        publisher.publishEvent(new ResourceCreatedEvent(this, response, savedCategory.getId()));
+        publisher.publishEvent(new ResourceCreatedEvent<>(this, response, savedCategory.getId()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
@@ -44,6 +44,8 @@ public class CategoryController {
     public ResponseEntity<Category> findById(@PathVariable Long id) {
 
         Optional<Category> category = categoryRepository.findById(id);
-        return !category.isEmpty() ? ResponseEntity.ok(category.get()) : ResponseEntity.notFound().build();
+        return category.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+
 }

@@ -3,6 +3,7 @@ package br.com.cpsoneghett.invoiceapi.controller;
 import br.com.cpsoneghett.invoiceapi.domain.model.Person;
 import br.com.cpsoneghett.invoiceapi.event.ResourceCreatedEvent;
 import br.com.cpsoneghett.invoiceapi.repository.PersonRepository;
+import br.com.cpsoneghett.invoiceapi.service.PersonService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.context.ApplicationEventPublisher;
@@ -18,13 +19,16 @@ import java.util.UUID;
 @RequestMapping("/api/v1/person")
 public class PersonController {
     
-    private PersonRepository personRepository;
+    private final PersonRepository personRepository;
 
-    private ApplicationEventPublisher publisher;
+    private final ApplicationEventPublisher publisher;
 
-    public PersonController(PersonRepository personRepository, ApplicationEventPublisher publisher) {
+    private final PersonService personService;
+
+    public PersonController(PersonRepository personRepository, ApplicationEventPublisher publisher, PersonService personService) {
         this.personRepository = personRepository;
         this.publisher = publisher;
+        this.personService = personService;
     }
 
     @GetMapping
@@ -37,7 +41,7 @@ public class PersonController {
     public ResponseEntity<Person> create(@Valid @RequestBody Person person, HttpServletResponse response) {
         Person savedPerson = personRepository.save(person);
 
-        publisher.publishEvent(new ResourceCreatedEvent(this, response, savedPerson.getId()));
+        publisher.publishEvent(new ResourceCreatedEvent<>(this, response, savedPerson.getId()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedPerson);
     }
@@ -45,7 +49,26 @@ public class PersonController {
     @GetMapping("/{id}")
     public ResponseEntity<Person> findById(@PathVariable UUID id) {
         Optional<Person> person = personRepository.findById(id);
-        return !person.isEmpty() ? ResponseEntity.ok(person.get()) : ResponseEntity.notFound().build();
+        return person.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable UUID id) {
+        Optional<Person> person = personRepository.findById(id);
+
+        if(person.isPresent()) {
+            personRepository.delete(person.get());
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else
+            return ResponseEntity.notFound().build();
+
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Person> update(@PathVariable UUID id, @Valid @RequestBody Person person) {
+
+        Person savedPerson = personService.update(id,person);
+        return ResponseEntity.ok(savedPerson);
     }
     
 }
