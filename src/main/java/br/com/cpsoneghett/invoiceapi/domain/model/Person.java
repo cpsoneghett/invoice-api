@@ -2,10 +2,6 @@ package br.com.cpsoneghett.invoiceapi.domain.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.ColumnTransformer;
-import org.hibernate.annotations.Type;
-import org.hibernate.usertype.UserType;
-import org.hibernate.usertype.UserVersionType;
 
 import java.util.Objects;
 import java.util.UUID;

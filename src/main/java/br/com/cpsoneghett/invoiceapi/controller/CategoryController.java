@@ -1,14 +1,15 @@
 package br.com.cpsoneghett.invoiceapi.controller;
 
 import br.com.cpsoneghett.invoiceapi.domain.model.Category;
+import br.com.cpsoneghett.invoiceapi.event.ResourceCreatedEvent;
 import br.com.cpsoneghett.invoiceapi.repository.CategoryRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,9 +18,11 @@ import java.util.Optional;
 public class CategoryController {
 
     private CategoryRepository categoryRepository;
+    private ApplicationEventPublisher publisher;
 
-    public CategoryController(CategoryRepository categoryRepository) {
+    public CategoryController(CategoryRepository categoryRepository, ApplicationEventPublisher publisher) {
         this.categoryRepository = categoryRepository;
+        this.publisher = publisher;
     }
 
     @GetMapping
@@ -29,10 +32,12 @@ public class CategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Category> create(@Valid @RequestBody Category category) {
+    public ResponseEntity<Category> create(@Valid @RequestBody Category category, HttpServletResponse response) {
         Category savedCategory = categoryRepository.save(category);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(savedCategory.getId()).toUri();
-        return ResponseEntity.created(uri).body(savedCategory);
+
+        publisher.publishEvent(new ResourceCreatedEvent(this, response, savedCategory.getId()));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 
     @GetMapping("/{id}")
