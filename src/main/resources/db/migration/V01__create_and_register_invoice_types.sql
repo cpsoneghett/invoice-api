@@ -1,10 +1,54 @@
-CREATE TABLE CATEGORY (
-    id BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE CATEGORY
+(
+    id   BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO CATEGORY (name) VALUES ('Leisure');
-INSERT INTO CATEGORY (name) VALUES ('Food');
-INSERT INTO CATEGORY (name) VALUES ('Market');
-INSERT INTO CATEGORY (name) VALUES ('Pharmacy');
-INSERT INTO CATEGORY (name) VALUES ('Others');
+INSERT INTO CATEGORY (name)
+VALUES ('Leisure'),
+       ('Food'),
+       ('Market'),
+       ('Pharmacy'),
+       ('Others'),
+       ('Clothing'),
+       ('Electronics'),
+       ('Books'),
+       ('Home Decor'),
+       ('Fitness'),
+       ('Toys'),
+       ('Jewelry'),
+       ('Automotive'),
+       ('Sports'),
+       ('Beauty'),
+       ('Garden'),
+       ('Pets'),
+       ('Stationery'),
+       ('Art'),
+       ('Music'),
+       ('Baby'),
+       ('Furniture'),
+       ('Shoes'),
+       ('Health'),
+       ('Tech'),
+       ('Accessories'),
+       ('Travel'),
+       ('Movies'),
+       ('Tools'),
+       ('Outdoor'),
+       ('Grocery'),
+       ('Appliances'),
+       ('Education'),
+       ('Gifts'),
+       ('Hobbies'),
+       ('Office Supplies'),
+       ('Party Supplies'),
+       ('Watches'),
+       ('Crafts'),
+       ('Software'),
+       ('Photography'),
+       ('Beverages'),
+       ('Dining'),
+       ('Insurance'),
+       ('Finance'),
+       ('Services'),
+       ('Hardware');

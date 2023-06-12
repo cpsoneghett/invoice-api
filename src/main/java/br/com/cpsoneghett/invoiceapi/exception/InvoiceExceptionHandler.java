@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @ControllerAdvice
 public class InvoiceExceptionHandler extends ResponseEntityExceptionHandler {
@@ -34,7 +35,7 @@ public class InvoiceExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         String userMessage = messageSource.getMessage("invalid.message", null, LocaleContextHolder.getLocale());
-        String devMessage = ex.getCause().toString();
+        String devMessage = Optional.ofNullable(ex.getCause()).orElse(ex).toString();
 
         List<InvoiceError> errors = List.of(new InvoiceError(userMessage, devMessage));
 

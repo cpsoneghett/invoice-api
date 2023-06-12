@@ -20,13 +20,23 @@ public class PersonService {
 
     public Person update(UUID id, Person person) {
 
-        Optional<Person> savedPerson = personRepository.findById(id);
-
-        if (savedPerson.isEmpty())
-            throw new NoSuchElementException("Element with id " + id + " was not found;");
+        Optional<Person> savedPerson = getPersonById(id);
 
         BeanUtils.copyProperties(person, savedPerson.get(), "id");
         return personRepository.save(savedPerson.get());
     }
 
+    public void updateActiveStatus(UUID id, Boolean active) {
+        Optional<Person> savedPerson = getPersonById(id);
+
+        savedPerson.get().setActive(active);
+        personRepository.save(savedPerson.get());
+    }
+
+    private Optional<Person> getPersonById(UUID id) {
+        Optional<Person> savedPerson = personRepository.findById(id);
+
+        if (savedPerson.isEmpty()) throw new NoSuchElementException("Resource with id " + id + " was not found;");
+        return savedPerson;
+    }
 }

@@ -10,7 +10,7 @@ public class Address {
     private String number;
     private String complement;
     private String neighborhood;
-    @Column(name = "zipcode")
+    @Column(name = "zip_code")
     private String zipCode;
     private String city;
     private String state;
