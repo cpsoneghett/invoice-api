@@ -2,11 +2,17 @@ package br.com.cpsoneghett.invoiceapi.controller;
 
 import br.com.cpsoneghett.invoiceapi.domain.model.Entry;
 import br.com.cpsoneghett.invoiceapi.event.ResourceCreatedEvent;
-import br.com.cpsoneghett.invoiceapi.repository.EntryRepository;
+import br.com.cpsoneghett.invoiceapi.exception.InactiveStatusException;
+import br.com.cpsoneghett.invoiceapi.exception.InvoiceError;
+import br.com.cpsoneghett.invoiceapi.repository.filter.EntryFilter;
 import br.com.cpsoneghett.invoiceapi.service.EntryService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,28 +25,28 @@ import java.util.UUID;
 @RequestMapping("/api/v1/entry")
 public class EntryController {
 
-    private final EntryRepository entryRepository;
-
-    private final ApplicationEventPublisher publisher;
-
     private final EntryService entryService;
 
+    private final ApplicationEventPublisher publisher;
+    private final MessageSource messageSource;
 
-    public EntryController(EntryRepository entryRepository, ApplicationEventPublisher publisher, EntryService entryService) {
-        this.entryRepository = entryRepository;
+
+
+    public EntryController(ApplicationEventPublisher publisher, EntryService entryService, MessageSource messageSource) {
         this.publisher = publisher;
         this.entryService = entryService;
+        this.messageSource = messageSource;
     }
 
     @GetMapping
-    public List<Entry> list() {
-        return entryRepository.findAll();
+    public Page<Entry> search(EntryFilter filter, Pageable pageable) {
+        return entryService.filter(filter, pageable);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Entry> create(@Valid @RequestBody Entry entry, HttpServletResponse response) {
-        Entry savedEntry = entryRepository.save(entry);
+    public ResponseEntity<Entry> save(@Valid @RequestBody Entry entry, HttpServletResponse response) {
+        Entry savedEntry = entryService.save(entry);
 
         publisher.publishEvent(new ResourceCreatedEvent<>(this, response, savedEntry.getId()));
 
@@ -49,16 +55,16 @@ public class EntryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Entry> findById(@PathVariable UUID id) {
-        Optional<Entry> entry = entryRepository.findById(id);
+        Optional<Entry> entry = entryService.findById(id);
         return entry.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable UUID id) {
-        Optional<Entry> entry = entryRepository.findById(id);
+        Optional<Entry> entry = entryService.findById(id);
 
         if (entry.isPresent()) {
-            entryRepository.delete(entry.get());
+            entryService.delete(entry.get());
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else
             return ResponseEntity.notFound().build();
@@ -72,4 +78,15 @@ public class EntryController {
         return ResponseEntity.ok(savedEntry);
     }
 
+
+    @ExceptionHandler({InactiveStatusException.class})
+    public ResponseEntity<Object> handleDataIntegrityViolationException(InactiveStatusException ex) {
+
+        String userMessage = messageSource.getMessage("person.inactive", null, LocaleContextHolder.getLocale());
+        String devMessage = ex.toString();
+
+        List<InvoiceError> errors = List.of(new InvoiceError(userMessage, devMessage));
+
+        return ResponseEntity.badRequest().body(errors);
+    }
 }

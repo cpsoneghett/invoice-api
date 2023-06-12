@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -22,7 +23,7 @@ public class Entry {
 
     @NotNull
     @Column(name = "dt_due")
-    private LocalDateTime dueDate;
+    private LocalDate dueDate;
 
     @Column(name = "dt_payment")
     private LocalDateTime paymentDate;
@@ -36,13 +37,15 @@ public class Entry {
     @Enumerated(EnumType.STRING)
     private EntryType type;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "id_person")
-    private Person idPerson;
+    private Person person;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "id_category")
-    private Category idCategory;
+    private Category category;
 
 
     public UUID getId() {
@@ -61,11 +64,11 @@ public class Entry {
         this.description = description;
     }
 
-    public LocalDateTime getDueDate() {
+    public LocalDate getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDateTime dueDate) {
+    public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
 
@@ -101,20 +104,20 @@ public class Entry {
         this.type = type;
     }
 
-    public Person getIdPerson() {
-        return idPerson;
+    public Person getPerson() {
+        return person;
     }
 
-    public void setIdPerson(Person idPerson) {
-        this.idPerson = idPerson;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
-    public Category getIdCategory() {
-        return idCategory;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setIdCategory(Category idCategory) {
-        this.idCategory = idCategory;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     @Override
