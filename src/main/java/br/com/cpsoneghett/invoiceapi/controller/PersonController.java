@@ -1,8 +1,8 @@
 package br.com.cpsoneghett.invoiceapi.controller;
 
 import br.com.cpsoneghett.invoiceapi.domain.model.Person;
+import br.com.cpsoneghett.invoiceapi.domain.service.PersonService;
 import br.com.cpsoneghett.invoiceapi.event.ResourceCreatedEvent;
-import br.com.cpsoneghett.invoiceapi.service.PersonService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.context.ApplicationEventPublisher;

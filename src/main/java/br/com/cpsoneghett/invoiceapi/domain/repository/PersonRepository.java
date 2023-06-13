@@ -1,4 +1,4 @@
-package br.com.cpsoneghett.invoiceapi.repository;
+package br.com.cpsoneghett.invoiceapi.domain.repository;
 
 import br.com.cpsoneghett.invoiceapi.domain.model.Person;
 import org.springframework.data.jpa.repository.JpaRepository;

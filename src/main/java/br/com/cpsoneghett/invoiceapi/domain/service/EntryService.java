@@ -1,10 +1,10 @@
-package br.com.cpsoneghett.invoiceapi.service;
+package br.com.cpsoneghett.invoiceapi.domain.service;
 
 import br.com.cpsoneghett.invoiceapi.domain.model.Entry;
 import br.com.cpsoneghett.invoiceapi.domain.model.Person;
+import br.com.cpsoneghett.invoiceapi.domain.repository.EntryRepository;
+import br.com.cpsoneghett.invoiceapi.domain.repository.filter.EntryFilter;
 import br.com.cpsoneghett.invoiceapi.exception.InactiveStatusException;
-import br.com.cpsoneghett.invoiceapi.repository.EntryRepository;
-import br.com.cpsoneghett.invoiceapi.repository.filter.EntryFilter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

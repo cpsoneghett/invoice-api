@@ -1,7 +1,7 @@
-package br.com.cpsoneghett.invoiceapi.service;
+package br.com.cpsoneghett.invoiceapi.domain.service;
 
 import br.com.cpsoneghett.invoiceapi.domain.model.Person;
-import br.com.cpsoneghett.invoiceapi.repository.PersonRepository;
+import br.com.cpsoneghett.invoiceapi.domain.repository.PersonRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
