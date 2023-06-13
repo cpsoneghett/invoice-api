@@ -1,7 +1,7 @@
-package br.com.cpsoneghett.invoiceapi.repository.entry;
+package br.com.cpsoneghett.invoiceapi.domain.repository.entry;
 
 import br.com.cpsoneghett.invoiceapi.domain.model.Entry;
-import br.com.cpsoneghett.invoiceapi.repository.filter.EntryFilter;
+import br.com.cpsoneghett.invoiceapi.domain.repository.filter.EntryFilter;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;

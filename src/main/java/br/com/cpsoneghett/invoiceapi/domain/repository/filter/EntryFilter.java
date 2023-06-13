@@ -1,4 +1,4 @@
-package br.com.cpsoneghett.invoiceapi.repository.filter;
+package br.com.cpsoneghett.invoiceapi.domain.repository.filter;
 
 import java.time.LocalDate;
 

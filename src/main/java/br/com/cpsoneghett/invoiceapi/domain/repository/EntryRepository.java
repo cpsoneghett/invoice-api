@@ -1,7 +1,7 @@
-package br.com.cpsoneghett.invoiceapi.repository;
+package br.com.cpsoneghett.invoiceapi.domain.repository;
 
 import br.com.cpsoneghett.invoiceapi.domain.model.Entry;
-import br.com.cpsoneghett.invoiceapi.repository.entry.EntryRepositoryQuery;
+import br.com.cpsoneghett.invoiceapi.domain.repository.entry.EntryRepositoryQuery;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
