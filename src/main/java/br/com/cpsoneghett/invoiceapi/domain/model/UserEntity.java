@@ -1,5 +1,6 @@
 package br.com.cpsoneghett.invoiceapi.domain.model;
 
+import br.com.cpsoneghett.invoiceapi.domain.enums.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedDate;
@@ -11,9 +12,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Person")
+@Table(name = "USER")
 @EntityListeners(AuditingEntityListener.class)
-public class Person {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,10 +24,16 @@ public class Person {
     private String name;
 
     @NotNull
-    private Boolean active;
+    @Column(unique = true)
+    private String email;
 
-    @Embedded
-    private Address address;
+    @NotNull
+    private String password;
+
+    @NotNull
+    private Boolean active;
+    @Enumerated(EnumType.STRING)
+    private UserType type;
 
     @CreatedDate
     @Column(name = "dt_created", nullable = false, updatable = false)
@@ -35,6 +42,17 @@ public class Person {
     @LastModifiedDate
     @Column(name = "dt_updated")
     private LocalDateTime updatedAt;
+
+    public UserEntity() {
+    }
+
+    public UserEntity(String name, String email, String password, UserType type) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.type = type;
+        this.active = Boolean.TRUE;
+    }
 
     public UUID getId() {
         return id;
@@ -52,7 +70,23 @@ public class Person {
         this.name = name;
     }
 
-    public Boolean isActive() {
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Boolean getActive() {
         return active;
     }
 
@@ -60,12 +94,12 @@ public class Person {
         this.active = active;
     }
 
-    public Address getAddress() {
-        return address;
+    public UserType getType() {
+        return type;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setType(UserType type) {
+        this.type = type;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -88,8 +122,8 @@ public class Person {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
-        return Objects.equals(id, person.id);
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override

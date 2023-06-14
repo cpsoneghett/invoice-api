@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "ENTRY")
+@EntityListeners(AuditingEntityListener.class)
 public class Entry {
 
     @Id
@@ -51,9 +53,11 @@ public class Entry {
     private Category category;
 
     @CreatedDate
+    @Column(name = "dt_created", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @Column(name = "dt_updated")
     private LocalDateTime updatedAt;
 
     public UUID getId() {

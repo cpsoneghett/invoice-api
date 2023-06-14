@@ -1,15 +1,19 @@
-CREATE TABLE PERSON (
-    id BINARY(16) DEFAULT (UUID_TO_BIN(UUID())) PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    street VARCHAR(30),
-    number VARCHAR(30),
-    complement VARCHAR(30),
+CREATE TABLE PERSON
+(
+    id           BINARY(16) DEFAULT (UUID_TO_BIN(UUID())) PRIMARY KEY,
+    name         VARCHAR(50)                                                      NOT NULL,
+    street       VARCHAR(30),
+    number       VARCHAR(30),
+    complement   VARCHAR(30),
     neighborhood VARCHAR(30),
-    zip_code VARCHAR(30),
-    city VARCHAR(30),
-    state VARCHAR(30),
-    active BOOLEAN NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    zip_code     VARCHAR(30),
+    city         VARCHAR(30),
+    state        VARCHAR(30),
+    active       BOOLEAN                                                          NOT NULL,
+    dt_created   DATETIME   DEFAULT CURRENT_TIMESTAMP                             NOT NULL,
+    dt_updated   DATETIME   DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 
 INSERT INTO person (name, street, number, complement, neighborhood, zip_code, city, state, active) values ('João Silva', 'Rua do Abacaxi', '10', null, 'Brasil', '38.400-12', 'Uberlândia', 'MG', true);
